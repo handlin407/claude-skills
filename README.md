@@ -1,212 +1,230 @@
-# Claude Skills for Commercial Real Estate Database Management
+# Commercial Real Estate Comp Database Skills
 
-Custom Claude skills for managing commercial real estate data in Airtable databases. These skills automate the workflow of parsing transaction information, validating addresses, checking for duplicates with fuzzy matching, and creating properly formatted records.
+Custom Claude skills for managing commercial real estate comp databases in Airtable. These skills automate transaction parsing, address validation, duplicate detection with fuzzy matching, and record creation across three core database types.
 
-## Skills
+## Overview
 
-### 1. transaction-comps
+This repository contains three production-ready Claude skills for CRE data management:
 
-**Purpose:** Manages commercial real estate property sales and acquisition transactions.
+| Skill | Purpose | Duplicate Logic | Status |
+|-------|---------|----------------|---------|
+| **transaction-comps** | Property sales & acquisitions | Purchaser + Address | ✓ v1.0.0 |
+| **lease-comps** | Tenant lease agreements | Tenant + Address | ✓ v1.1.0 |
+| **tenant-sales** | Retailer revenue data | Tenant + Address + Year | ✓ v1.2.0 |
 
-**Use when:** User provides property purchase, sale, or acquisition information that includes:
-- Purchaser/buyer name
-- Property address
-- Sale price
-- Building size
-- Transaction date
+## Key Features
 
-**Key Features:**
-- 5-step workflow: Parse → Validate → Format → Check duplicates → Draft → Create
-- Comprehensive fuzzy address matching (handles St/Street, N/North, Ave/Avenue variations)
-- Web search for address validation (finds missing ZIP codes)
-- Predefined submarkets for 14 major US markets
-- Test record markers for easy cleanup
+### Intelligent Workflow
+**5-Step Process:** Parse → Validate → Format → Check Duplicates → Create
+- Automatic address validation with web search for missing ZIP codes
+- Comprehensive fuzzy address matching (handles St/Street, N/North, etc.)
+- Smart duplicate detection with user override options
+- Formatted output with proper currency, measurements, and notes structure
 
-**Database:** Airtable Transaction Comps-HD table
+### Market Coverage
+**14 Major US Markets** with 55+ predefined submarkets:
+- **South Florida** (11): Brickell, Miami Beach, Design District, Wynwood, Coconut Grove, Aventura, Bal Harbour, Palm Beach, Worldcenter, Naples, Las Olas
+- **Chicago** (8): Gold Coast, Fulton Market / West Loop, River North, Lincoln Park, Wicker Park / Bucktown, Loop, Michigan Ave, Southport
+- **New York** (3): Soho, Madison / 5th Ave, Williamsburg
+- **Boston** (5): Back Bay, Seaport, Southie, Cambridge, Brookline, Wellesley
+- **San Francisco** (4): Union Square, Hayes Valley, Fillmore St, Chestnut / Marina
+- **Los Angeles** (8): Abbot Kinney, West Hollywood, Beverly Hills / Rodeo Drive, Santa Monica, Silverlake, Pasadena, Manhattan Beach, Highland Park
+- **Plus:** Austin, Atlanta, Charlotte, Houston, Orlando, Dallas, Washington DC
 
-**Status:** ✓ Complete and tested (Test Case 1 passed)
+Custom submarkets accepted for properties outside predefined areas.
 
-### 2. lease-comps (Coming Soon)
-
-**Purpose:** Manages commercial real estate tenant lease agreements.
-
-**Status:** Planned
-
-### 3. tenant-sales (Coming Soon)
-
-**Purpose:** Manages tenant sales revenue data.
-
-**Status:** Planned
+### Data Quality Controls
+- **Address Normalization**: Comprehensive fuzzy matching prevents duplicates
+- **Format Standards**: Consistent currency ($XX,XXX,XXX), size (X,XXX SF), and notes formatting
+- **Validation Protocol**: Address verification with override capability
+- **Error Handling**: Clear messaging for missing fields or validation issues
 
 ## Installation
 
-### Option 1: Upload .skill Package (Recommended)
+### Quick Start (Recommended)
 
-1. Download the `.skill` file from the releases
-2. In Claude.ai, go to Settings → Skills
-3. Click "Upload Skill" and select the `.skill` file
-4. The skill will be available in all your conversations
+1. **Download** the appropriate `.skill` file(s) from [Releases](https://github.com/handlin407/claude-compdatabase-skills/releases)
+2. **Upload** to Claude.ai:
+   - Go to Settings → Skills
+   - Click "Upload Skill"
+   - Select the `.skill` file
+3. **Use** in any conversation - skills trigger automatically when relevant data is provided
 
-### Option 2: Manual Installation
+### Manual Installation
 
-1. Clone this repository
-2. Copy the skill folder to your Claude skills directory
-3. Restart Claude or reload skills
+```bash
+git clone https://github.com/handlin407/claude-compdatabase-skills.git
+cd claude-compdatabase-skills
+# Copy desired skill folder to your Claude skills directory
+```
 
-## Usage
+## Usage Examples
 
-### transaction-comps
+### Transaction Comps
 
-**Simple Example:**
+**Simple Transaction:**
 ```
 Blackstone acquired 450 Park Avenue in Manhattan for $500M in Q4 2023. 
-The building is 600,000 SF office tower.
+The building is a 600,000 SF office tower.
 ```
 
-The skill will:
-1. Parse the transaction details
-2. Validate the address (add ZIP code if missing)
-3. Format all fields properly ($500,000,000, 600,000 SF)
-4. Check for duplicates using fuzzy matching
-5. Draft a record for your approval
-6. Create the record in Airtable once approved
-
-**Complex Example:**
+**Portfolio Deal:**
 ```
-Starwood Capital purchased Lincoln Road retail building in Miami Beach for $210M, Q1 2024. 
-Property is 85,000 SF flagship retail with tenants including Apple and Tesla. 
-Deal was 65% LTV with Wells Fargo providing senior debt. 
-In-place NOI is $14.7M representing 7.0% cap rate.
+Brookfield purchased a 3-property South Florida retail portfolio for $125M in 2024:
+1) 500 Lincoln Road, Miami Beach - 20,000 SF
+2) 200 Las Olas Blvd, Fort Lauderdale - 35,000 SF
+3) 300 Miracle Mile, Coral Gables - 18,000 SF
 ```
 
-The skill will capture all details in properly formatted Notes field.
+### Lease Comps
 
-## Testing
+**Retail Lease:**
+```
+Nike signed a lease at 100 Lincoln Road, Miami Beach for 5,000 SF at $150/SF/year in Q3 2024.
+10-year term with 5-year renewal option.
+```
 
-Each skill includes a comprehensive test suite with:
-- 12+ test cases covering all scenarios
-- Test record markers (`[TEST]` prefix) for easy cleanup
-- Pre-test and post-test checklists
-- Success criteria validation
+**Office Lease with Complex Terms:**
+```
+Microsoft leased 50,000 SF at 1000 Brickell Avenue for $75/SF in Q1 2024.
+20-year term, $2.5M TI allowance, 6 months free rent, 3% percentage rent over $10M threshold.
+```
 
-See individual skill folders for detailed test suites.
+### Tenant Sales
 
-## Supported Markets
+**Retail Performance:**
+```
+Apple Store at 100 Lincoln Road, Miami Beach generated $18.5M in 2024.
+Store is 12,000 SF flagship location ($1,542/SF).
+```
 
-The skills include predefined submarkets for:
-- **Chicago** (8 submarkets)
-- **South Florida** (11 submarkets)
-- **New York** (3 submarkets)
-- **Boston** (5 submarkets)
-- **San Francisco** (4 submarkets)
-- **Los Angeles** (8 submarkets)
-- **Austin** (3 submarkets)
-- **Atlanta** (3 submarkets)
-- **Charlotte** (1 submarket)
-- **Houston** (1 submarket)
-- **Orlando** (4 submarkets)
-- **Dallas** (1 submarket)
-- **Washington DC** (3 submarkets)
-
-Custom submarkets can be specified for properties outside these predefined areas.
+**Restaurant with Metrics:**
+```
+Carbone at 49 Collins Avenue did $8.2M in 2023.
+4,500 SF unit, $180/SF rent, 9.9% occupancy cost, $125 average check, 180 covers/night.
+```
 
 ## Requirements
 
-- Claude with Skills feature enabled
-- Airtable MCP server configured
-- Access to the relevant Airtable bases:
-  - Transaction Comps-HD: `appgcNuJlSybJQ0Lf`
-  - Lease Comps-HD: (coming soon)
-  - Tenant Sales-HD: (coming soon)
+- **Claude.ai** with Skills feature enabled
+- **Airtable MCP** server configured with access to:
+  - Transaction Comps-HD: `appgcNuJlSybJQ0Lf / tblVWAXsv9KxphqdC`
+  - Lease Comps-HD: `apptqaigvuDe1izN6 / tblbIOTTyKa0vJSdU`
+  - Tenant Sales-HD: `app53DekPcYwDuV3E / tblahbVKhP8HFx7YQ`
 
-## File Structure
+## Repository Structure
 
 ```
-transaction-comps/
-├── SKILL.md                    # Main skill instructions (350 lines)
-├── TEST-SUITE.md                # Comprehensive test suite (12 test cases)
-└── examples/
-    └── formatted-records.md     # 5 detailed formatting examples
+claude-compdatabase-skills/
+├── transaction-comps/
+│   ├── SKILL.md                          # Core skill instructions
+│   └── examples/formatted-records.md     # Reference examples
+├── lease-comps/
+│   ├── SKILL.md
+│   └── examples/formatted-records.md
+├── tenant-sales/
+│   ├── SKILL.md
+│   └── examples/formatted-records.md
+├── test-files/
+│   ├── transaction-comps-TEST-SUITE.md   # 12 test cases
+│   ├── lease-comps-TEST-SUITE.md         # 12 test cases
+│   └── tenant-sales-TEST-SUITE.md        # 12 test cases
+└── README.md
 ```
 
-## Features
+## Testing
+
+Each skill includes a comprehensive test suite with 12 test cases covering:
+- Basic workflow validation
+- Complex multi-property/multi-unit scenarios
+- Missing field error handling
+- Exact duplicate detection (fuzzy matching)
+- Address validation protocols
+- Custom submarket handling
+- Large transaction formatting
+- And more...
+
+Test files use `[TEST]` markers for easy cleanup. See `test-files/` directory for complete test suites.
+
+## Technical Details
 
 ### Fuzzy Address Matching
 
-Comprehensive address normalization prevents duplicate entries:
-- Street suffix variations (St/Street, Ave/Avenue, Blvd/Boulevard)
-- Directional prefix variations (N/North, S/South, etc.)
-- Unit designation variations (Ste/Suite, Apt/Unit)
-- Case-insensitive matching
-- Extra space removal
-
-### Address Validation
-
-Automatically finds missing ZIP codes using web search:
-- Validates every address before record creation
-- Override protocol available if needed
-- Documents validation status in notes
+Comprehensive normalization prevents duplicate entries:
+- **Street suffixes**: St/Street, Ave/Avenue, Blvd/Boulevard, Rd/Road, Dr/Drive, Ln/Lane, Ct/Court, Pl/Place, Pkwy/Parkway
+- **Directional prefixes**: N/North, S/South, E/East, W/West, NE/Northeast, NW/Northwest, SE/Southeast, SW/Southwest
+- **Unit designations**: Ste/Suite, Apt/Apartment, #/Unit, Fl/Floor
+- **Case-insensitive** with extra space removal
 
 ### Data Formatting Standards
 
-**Price:** `$XX,XXX,XXX` or `$XX.XM` (always with $ and commas/suffix)
+**Currency:** `$XX,XXX,XXX` or `$XX.XM` (with $ and commas/suffix)  
+**Size:** `X,XXX SF` (with commas and uppercase SF)  
+**Dates:** `Q1 2024`, `2024`, or specific dates  
+**Notes:** Semicolon-separated with line breaks for major sections
 
-**Size:** `X,XXX SF` (always with commas and uppercase SF)
+### Duplicate Detection Logic
 
-**Notes:** Semicolon-separated points with line breaks for major sections
-
-### Error Handling
-
-- Missing required fields → STOP and list what's needed
-- Address validation failure → STOP and request complete address
-- Duplicate detected → STOP and present options (Update/Create/Skip)
-- Airtable API errors → Show error and ask to retry
+| Skill | Fields Checked | Match Criteria |
+|-------|---------------|----------------|
+| Transaction Comps | Purchaser + Address | Both must match (fuzzy address) |
+| Lease Comps | Tenant + Address | Both must match (fuzzy address) |
+| Tenant Sales | Tenant + Address + Year | All three must match (fuzzy address) |
 
 ## Development
 
 ### Building New Skills
 
-Follow the same pattern:
-1. Define YAML frontmatter with name and description
+Follow the established pattern:
+1. Define YAML frontmatter with metadata
 2. Document database reference (baseId, tableId, fields)
-3. Create step-by-step workflow
-4. Implement fuzzy matching for your duplicate logic
-5. Add comprehensive test suite
+3. Implement 5-step workflow
+4. Add fuzzy matching for duplicate logic
+5. Create comprehensive test suite (12+ cases)
 6. Provide formatting examples
 
 ### Contributing
 
 Contributions welcome! Please:
 1. Follow existing skill structure
-2. Include comprehensive test suite
+2. Include test suite with `[TEST]` markers
 3. Add formatting examples
-4. Document submarket additions
-5. Test thoroughly before submitting PR
+4. Document new submarkets
+5. Test thoroughly before PR
+
+## Version History
+
+### v1.2.0 (December 16, 2024)
+- ✓ All three skills production-ready
+- ✓ Comprehensive test suites (36 total test cases)
+- ✓ Clean skill packages (TEST-SUITE.md moved to test-files/)
+- ✓ 14 markets, 55+ submarkets supported
+- ✓ Fuzzy address matching validated
+- ✓ Package sizes optimized (7-8KB each)
+
+### v1.0.0 (December 16, 2024)
+- ✓ Initial release: transaction-comps skill
+- ✓ 5-step workflow implemented
+- ✓ Fuzzy address matching engine
+- ✓ Test suite framework established
 
 ## License
 
-MIT License - See LICENSE file for details
-
-## Author
-
-Handlin - Commercial Real Estate Analyst
-
-## Changelog
-
-### v1.0.0 (December 16, 2024)
-- ✓ transaction-comps skill complete
-- ✓ 5-step workflow implemented
-- ✓ Fuzzy address matching validated
-- ✓ Test suite created (12 test cases)
-- ✓ Test Case 1 passed successfully
-- ✓ Formatting examples documented
-- □ lease-comps skill (planned)
-- □ tenant-sales skill (planned)
+MIT License - See LICENSE file for details.
 
 ## Support
 
 For issues or questions:
-1. Check the TEST-SUITE.md for common scenarios
-2. Review examples in formatted-records.md
-3. Open an issue on GitHub
-4. Reference the relevant SKILL.md documentation
+1. Check [test-files/](test-files/) for comprehensive test scenarios
+2. Review [examples/](transaction-comps/examples/) for formatting guidance
+3. Open an [issue](https://github.com/handlin407/claude-compdatabase-skills/issues)
+4. Reference individual SKILL.md files for detailed documentation
+
+## Author
+
+**Handlin** - Commercial Real Estate Analyst  
+Specializing in South Florida markets with comprehensive CRE data management expertise.
+
+---
+
+**Note:** These skills are designed for professional CRE data management. Address validation and duplicate detection features ensure data integrity across growing databases tracking thousands of transactions, leases, and sales records.
